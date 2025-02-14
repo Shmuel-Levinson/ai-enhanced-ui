@@ -2,17 +2,14 @@ import React, {useState, useEffect, useRef} from "react"
 import axios from "axios"
 import "./App.css"
 import {TRANSACTIONS} from "./mock-data.ts"
-import {isEmpty} from "./utils/object-utils.ts"
 import Accounts from './components/Accounts';
 import Settings from './components/Settings';
 import Dashboard from './components/Dashboard';
 import Profile from './components/Profile';
 import Notifications from './components/Notifications';
 import {Loader} from './components/Loader';
-import {generateColor, generatePastelColor} from './utils/color-utils';
-import {allSuggestions} from './data/suggestions';
+import {generatePastelColor} from './utils/color-utils';
 import TransactionList from "./components/TransactionList.tsx";
-import {TextWidget} from './components/TextWidget';
 
 const initialFilterState = {
     startDateFilter: "",
@@ -52,6 +49,11 @@ export interface Settings {
     };
 }
 
+interface ITask{
+    agent:string;
+    response: {response:string};
+}
+
 const lightTheme = {
     background: '#ffffff',
     surface: '#f5f5f5',
@@ -79,8 +81,8 @@ function App() {
     const [filteredTransactions, setFilteredTransactions] = useState(TRANSACTIONS)
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
-    const [minAmountFilter, setminAmountFilter] = useState("")
-    const [maxAmountFilter, setmaxAmountFilter] = useState("")
+    const [minAmountFilter, setMinAmountFilter] = useState("")
+    const [maxAmountFilter, setMaxAmountFilter] = useState("")
     const [typeFilter, setTypeFilter] = useState("all")
     const [categoryFilter, setCategoryFilter] = useState("all")
     const [paymentMethodFilter, setPaymentMethodFilter] = useState("all")
@@ -88,11 +90,7 @@ function App() {
     const [agentsResponses, setAgentsResponses] = useState<string[]>([])
     const [chatInput, setChatInput] = useState("")
     const [isLoading, setIsLoading] = useState(false)
-    const [allShuffledSuggestions, setAllShuffledSuggestions] = useState([...allSuggestions])
-    const [visibleSuggestions, setVisibleSuggestions] = useState(allSuggestions.slice(0, 2))
-    const canvasRef = useRef(null)
     const [currentPage, setCurrentPage] = useState("transactions")
-    const [isDarkMode, setIsDarkMode] = useState(false)
     const [widgets, setWidgets] = useState<Widget[]>([
         // {
         //     id: '1',
@@ -105,7 +103,7 @@ function App() {
         //     id: '2',
         //     type: 'pie-chart',
         //     gridArea: '1 / 2',
-        //     name: 'Payment Menthods',
+        //     name: 'Payment Methods',
         //     color: generatePastelColor(),
         //     groupBy: 'paymentMethod',
         // },
@@ -233,13 +231,13 @@ function App() {
             const transactionDate = new Date(transaction.date)
             const startDateObject = startDate ? new Date(startDate) : new Date(0)
             const endDateObject = endDate ? new Date(endDate) : new Date()
-            const properminAmountFilter = (minAmountFilter === undefined || minAmountFilter) === null ? "" : minAmountFilter
-            const propermaxAmountFilter = maxAmountFilter === undefined || maxAmountFilter === null ? "" : maxAmountFilter
+            const properMinAmountFilter = (minAmountFilter === undefined || minAmountFilter) === null ? "" : minAmountFilter
+            const properMaxAmountFilter = maxAmountFilter === undefined || maxAmountFilter === null ? "" : maxAmountFilter
             return (
                 transactionDate >= startDateObject &&
                 transactionDate <= endDateObject &&
-                (properminAmountFilter === "" || Math.abs(transaction.amount) >= Number.parseFloat(properminAmountFilter)) &&
-                (propermaxAmountFilter === "" || Math.abs(transaction.amount) <= Number.parseFloat(propermaxAmountFilter)) &&
+                (properMinAmountFilter === "" || Math.abs(transaction.amount) >= Number.parseFloat(properMinAmountFilter)) &&
+                (properMaxAmountFilter === "" || Math.abs(transaction.amount) <= Number.parseFloat(properMaxAmountFilter)) &&
                 (typeFilter === "all" || transaction.type === typeFilter) &&
                 (categoryFilter === "all" || transaction.category === categoryFilter) &&
                 (paymentMethodFilter === "all" || transaction.paymentMethod === paymentMethodFilter)
@@ -256,69 +254,11 @@ function App() {
     const setFilters = (filters: any) => {
         setStartDate(filters.startDateFilter)
         setEndDate(filters.endDateFilter)
-        setminAmountFilter(filters.minAmountFilter)
-        setmaxAmountFilter(filters.maxAmountFilter)
+        setMinAmountFilter(filters.minAmountFilter)
+        setMaxAmountFilter(filters.maxAmountFilter)
         setTypeFilter(filters.typeFilter)
         setCategoryFilter(filters.categoryFilter)
         setPaymentMethodFilter(filters.paymentMethodFilter)
-    }
-
-    const drawPieChart = () => {
-        const canvas = canvasRef.current
-        if (!canvas) return
-        const ctx = canvas!.getContext("2d")
-        const centerX = canvas.width / 3
-        const centerY = canvas.height / 3
-        const radius = Math.min(centerX, centerY) - 10
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
-
-        const categoryTotals = filteredTransactions.reduce((acc: Record<string, any>, transaction) => {
-            acc[transaction.category] = (acc[transaction.category] || 0) + Math.abs(transaction.amount)
-            return acc
-        }, {})
-
-        const totalAmount = Object.values(categoryTotals).reduce((sum, amount) => sum + amount, 0)
-
-        // Generate colors for each category
-        const colors = {}
-        Object.keys(categoryTotals).forEach((category, index) => {
-            colors[category] = generateColor(index)
-        })
-
-        let startAngle = 0
-        Object.entries(categoryTotals).forEach(([category, amount]) => {
-            const sliceAngle = (amount / totalAmount) * 2 * Math.PI
-
-            ctx.beginPath()
-            ctx.moveTo(centerX, centerY)
-            ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle)
-            ctx.closePath()
-
-            ctx.fillStyle = colors[category]
-            ctx.fill()
-
-            startAngle += sliceAngle
-        })
-
-        // Draw legend (Positioned to the right of the pie)
-        const legendX = centerX + radius + 20
-        let legendY = 30
-        ctx.font = "14px Arial"
-
-        Object.entries(categoryTotals).forEach(([category, amount]) => {
-            const percentage = ((amount / totalAmount) * 100).toFixed(1)
-
-            // Legend color box
-            ctx.fillStyle = colors[category]
-            ctx.fillRect(legendX, legendY - 10, 14, 14)
-
-            // Legend text
-            ctx.fillStyle = "#000"
-            ctx.fillText(`${category}: ${percentage}%`, legendX + 20, legendY + 2)
-
-            legendY += 25
-        })
     }
 
     const handleChatSubmit = async (e: any, prompt: string = "") => {
@@ -360,7 +300,7 @@ function App() {
                 setIsLoading(false);
                 return
             }
-            tasksForResolvers.forEach((task, index) => {
+            tasksForResolvers.forEach((task:ITask, index:number) => {
                 setTimeout(() => {
                     const agent = Agents[task.agent];
                     if (!agent) {
@@ -390,12 +330,6 @@ function App() {
         // const shuffled = shuffleArray([...allSuggestions])
         // setAllShuffledSuggestions(shuffled)
         // setVisibleSuggestions(shuffled.slice(0, 2))
-    }
-
-    const handleMoreSuggestions = () => {
-        const currentLength = visibleSuggestions.length
-        const nextSuggestions = allShuffledSuggestions.slice(currentLength, currentLength + 2)
-        setVisibleSuggestions([...visibleSuggestions, ...nextSuggestions])
     }
 
     const spinKeyframes = `
@@ -446,6 +380,7 @@ function App() {
                     onRemoveWidget={handleRemoveWidget}
                     onUpdateWidgets={handleUpdateWidgets}
                     transactions={filteredTransactions}
+                    updateWidgetText={updateWidgetText}
                 />;
         }
     };
@@ -478,14 +413,14 @@ function App() {
                     type="number"
                     placeholder="Min Amount"
                     value={minAmountFilter}
-                    onChange={(e) => setminAmountFilter(e.target.value)}
+                    onChange={(e) => setMinAmountFilter(e.target.value)}
                     style={{padding: "5px", borderRadius: "3px", border: "1px solid #ccc", width: "8em"}}
                 />
                 <input
                     type="number"
                     placeholder="Max Amount"
                     value={maxAmountFilter}
-                    onChange={(e) => setmaxAmountFilter(e.target.value)}
+                    onChange={(e) => setMaxAmountFilter(e.target.value)}
                     style={{padding: "5px", borderRadius: "3px", border: "1px solid #ccc", width: "8em"}}
                 />
                 <select
@@ -547,21 +482,6 @@ function App() {
     const handleUpdateWidgets = (newWidgets: Widget[]) => {
         setWidgets(newWidgets);
         console.log("widgets updated", newWidgets)
-    };
-
-    const handleSettingChange = <K extends keyof Settings>(key: K, value: Settings[K]) => {
-        setSettings(prev => ({
-            ...prev,
-            [key]: value
-        }));
-    };
-
-    const handleWidgetNameChange = (id: string, newName: string) => {
-        setWidgets(widgets.map(widget =>
-            widget.id === id
-                ? {...widget, name: newName}
-                : widget
-        ));
     };
 
     const updateWidgetText = (widgetId: string, newText: string) => {
@@ -845,7 +765,7 @@ function App() {
                                 >
                                     <div style={{
                                         fontSize: '12px',
-                                        color: currentTheme.textMuted || '#666',
+                                        color: '#666',
                                         marginBottom: '4px'
                                     }}>
                                         {index === 0 ? 'Parser Response' : `Agent Response ${index}`}
