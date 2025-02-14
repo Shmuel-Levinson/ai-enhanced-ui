@@ -526,34 +526,6 @@ function App() {
         </div>;
     }
 
-    function transactionsListSection() {
-        return <div style={{display: "flex"}}>
-            {/* <div
-                style={{
-                    flex: 1,
-                    backgroundColor: currentTheme.surface,
-                    padding: "20px",
-                    borderRadius: "5px",
-                }}
-            >
-                <canvas ref={canvasRef} width="500" height="500"
-                        style={{margin: "0 auto", display: "block"}}></canvas>
-            </div> */}
-
-            <div
-
-                style={{
-                    flex: 1,
-                    backgroundColor: currentTheme.surface,
-                    padding: "20px",
-                    borderRadius: "5px",
-                    maxHeight: "500px",
-                }}
-            >
-                <TransactionList transactions={filteredTransactions} currentTheme={currentTheme}/>
-            </div>
-        </div>;
-    }
 
     const handleAddWidget = (type: 'pie-chart' | 'bar-graph' | 'text', gridArea: string, color?: string) => {
         const newWidget: Widget = {
