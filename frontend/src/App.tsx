@@ -11,6 +11,9 @@ import {Loader} from './components/Loader';
 import {generatePastelColor} from './utils/color-utils';
 import TransactionList from "./components/TransactionList.tsx";
 
+const MODE: "prod" | "dev" = "prod" //"dev"
+const baseUrl = MODE === "prod" ? "https://ai-enhanced-ui.onrender.com" : "http://localhost:3000"
+
 const initialFilterState = {
     startDateFilter: "",
     endDateFilter: "",
@@ -49,9 +52,9 @@ export interface Settings {
     };
 }
 
-interface ITask{
-    agent:string;
-    response: {response:string};
+interface ITask {
+    agent: string;
+    response: { response: string };
 }
 
 const lightTheme = {
@@ -271,7 +274,7 @@ function App() {
         console.log("loading...")
         try {
             const parseUserPromptRes = await axios.post(
-                "http://localhost:5000/parse-user-prompt",
+                `${baseUrl}/parse-user-prompt`,
                 {
                     prompt: prompt ? prompt : chatInput,
                     context: {currentPage: currentPage}
@@ -294,13 +297,13 @@ function App() {
                 }
             )
 
-            const agentExecutorRes = await axios.post("http://localhost:5000/agent-executor", augmentedTasks)
+            const agentExecutorRes = await axios.post(`${baseUrl}/agent-executor`, augmentedTasks)
             const tasksForResolvers = agentExecutorRes.data
             if (tasksForResolvers.length < 1) {
                 setIsLoading(false);
                 return
             }
-            tasksForResolvers.forEach((task:ITask, index:number) => {
+            tasksForResolvers.forEach((task: ITask, index: number) => {
                 setTimeout(() => {
                     const agent = Agents[task.agent];
                     if (!agent) {
