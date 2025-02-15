@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { generateColor } from '../utils/color-utils';
 
 interface Transaction {

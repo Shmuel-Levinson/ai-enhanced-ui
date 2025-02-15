@@ -1,4 +1,3 @@
-import React from 'react';
 import { Settings as SettingsType } from '../App';
 
 interface SettingsProps {
