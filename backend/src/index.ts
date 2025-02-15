@@ -17,7 +17,7 @@ import {DashboardAgent} from "./ai/agents/dashboard-agent";
 dotenv.config();
 const app = express();
 const corsOptions = {
-    origin: process.env.ENV === 'PROD' ? 'https://www.my-app.com' : 'http://localhost:5173',
+    origin: process.env.ENV === 'PROD' ? 'https://ai-enhanced-ui.netlify.app' : 'http://localhost:5173',
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204,
