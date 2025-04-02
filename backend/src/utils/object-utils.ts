@@ -25,3 +25,15 @@ export function extractJsonFromString(input: string): Record<string, any> {
 
     return {}; // No valid JSON found
 }
+
+export function nullifyFields(obj: any, fields: string[]): void {
+    if (!obj || typeof obj !== 'object') {
+        return;
+    }
+    
+    fields.forEach((field) => {
+        if (obj[field] !== undefined) {
+            obj[field] = null;
+        }
+    });
+}
