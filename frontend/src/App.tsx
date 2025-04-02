@@ -552,7 +552,7 @@ function App() {
                             type="text"
                             value={chatInput}
                             onChange={(e) => setChatInput(e.target.value)}
-                            placeholder="What would you like to do?"
+                            placeholder="What would you like to do? Try asking me to navigate to a certain tab..."
                             style={{
                                 flex: 1,
                                 padding: "10px",
