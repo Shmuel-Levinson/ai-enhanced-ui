@@ -12,7 +12,7 @@ import {generatePastelColor} from './utils/color-utils';
 import TransactionList from "./components/TransactionList.tsx";
 
 const MODE: "prod" | "dev" = "prod" //"dev"
-const baseUrl = MODE === "prod" ? "https://ai-enhanced-ui.onrender.com" : "http://localhost:3000"
+const baseUrl = MODE === "prod" ? "https://ai-enhanced-ui.onrender.com" : "http://localhost:5000"
 
 const initialFilterState = {
     startDateFilter: "",
@@ -144,7 +144,7 @@ function App() {
             showStatusBar: true,
         }
     });
-    const [showChat, setShowChat] = useState(false);
+    const [showChat, setShowChat] = useState(true);//test
     const inputRef = useRef<HTMLInputElement>(null);
     const [responseModal, setResponseModal] = useState<ResponseModal>({
         isOpen: false,
