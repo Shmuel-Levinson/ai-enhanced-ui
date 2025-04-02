@@ -36,6 +36,7 @@ export interface Widget {
 
 export interface Settings {
     density: 'comfortable' | 'cozy' | 'compact';
+
     notifications: {
         email: boolean;
         push: boolean;
