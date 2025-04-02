@@ -43,7 +43,7 @@ describe('nullifyFields', () => {
     
     // Assert
     expect(testObject).toEqual({
-      name: 'Johnny2',
+      name: 'John',
       age: null,
       email: null,
       address: '123 Main St'
