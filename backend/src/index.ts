@@ -26,7 +26,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(helmet()); // Security middleware
 app.use(cookieParser()); // Parse cookies
-app.use(bodyParser.json()); // Parse JSON request bodies
+app.use(bodyParser.json()   );  // Parse JSON request bodies
 app.use(bodyParser.urlencoded({extended: true})); // Parse URL-encoded request bodies
 
 console.log("I'm alive")
@@ -85,7 +85,7 @@ app.post('/parse-user-prompt', async (req: Request, res: Response) => {
 })
 
 app.post('/agent-executor', async (req: Request, res: Response) => {
-    const tasks = req.body;
+    const tasks = req.body
     const responses = await Promise.all(tasks.map((async (task:any) => {
         const agent: { name: string, getResponse: Function } = AGENTS[task.agent];
         if (!agent) {

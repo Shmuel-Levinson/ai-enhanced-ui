@@ -10,8 +10,10 @@ import Notifications from './components/Notifications';
 import {Loader} from './components/Loader';
 import {generatePastelColor} from './utils/color-utils';
 import TransactionList from "./components/TransactionList.tsx";
+import Chatbot from "./components/Chatbot.tsx";
 
-const MODE: "prod" | "dev" = "prod" //"dev"
+const MODE: "prod" | "dev" = "dev" //"dev"
+// @ts-ignore
 const baseUrl = MODE === "prod" ? "https://ai-enhanced-ui.onrender.com" : "http://localhost:5000"
 
 const initialFilterState = {
@@ -506,106 +508,107 @@ function App() {
     return (
         <>
             <style>{spinKeyframes}</style>
-            <div style={{
-                fontFamily: "Arial, sans-serif",
-                maxWidth: "1200px",
-                margin: "0 auto",
-                boxSizing: "border-box",
-                padding: "20px",
-                backgroundColor: currentTheme.background,
-                color: currentTheme.text,
-                transition: "all 0.3s ease",
-                height: "100vh",
-                display: "flex",
-                flexDirection: "column",
-                gap: "20px",
-                overflow: "hidden"
-            }}>
-                {/* Theme Toggle - fixed height */}
+            <div style={{display: "flex", height: "100vh", margin: "0 auto",}}>
                 <div style={{
+                    fontFamily: "Arial, sans-serif",
+                    // maxWidth: "1200px",
+                    flex: 3,
+                    boxSizing: "border-box",
+                    padding: "20px",
+                    backgroundColor: currentTheme.background,
+                    color: currentTheme.text,
+                    transition: "all 0.3s ease",
+                    height: "100vh",
                     display: "flex",
-                    justifyContent: "flex-end",
+                    flexDirection: "column",
+                    gap: "20px",
+                    overflow: "hidden",
                 }}>
-                    <button
-                        onClick={toggleTheme}
-                        style={{
-                            padding: "10px 20px",
-                            fontSize: "16px",
-                            backgroundColor: "transparent",
-                            color: currentTheme.text,
-                            border: `1px solid ${currentTheme.border}`,
-                            borderRadius: "5px",
-                            cursor: "pointer",
-                        }}
-                    >
-                        {theme === 'dark' ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
-                    </button>
-                </div>
-
-                {/* Chat Form - fixed height */}
-                {showChat && (
-                    <form onSubmit={(e) => handleChatSubmit(e)} style={{
+                    {/* Theme Toggle - fixed height */}
+                    <div style={{
                         display: "flex",
+                        justifyContent: "flex-end",
                     }}>
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            value={chatInput}
-                            onChange={(e) => setChatInput(e.target.value)}
-                            placeholder="What would you like to do? Try asking me to navigate to a certain tab..."
-                            style={{
-                                flex: 1,
-                                padding: "10px",
-                                fontSize: "16px",
-                                borderRadius: "5px 0 0 5px",
-                                border: "1px solid #ccc",
-                                borderRight: "none",
-                                outline: "none",
-                            }}
-                        />
                         <button
-                            type="submit"
+                            onClick={toggleTheme}
                             style={{
                                 padding: "10px 20px",
                                 fontSize: "16px",
-                                backgroundColor: "#007bff",
-                                color: "white",
-                                border: "none",
-                                borderRadius: "0 5px 5px 0",
+                                backgroundColor: "transparent",
+                                color: currentTheme.text,
+                                border: `1px solid ${currentTheme.border}`,
+                                borderRadius: "5px",
                                 cursor: "pointer",
                             }}
                         >
-                            {"➤"}
+                            {theme === 'dark' ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
                         </button>
-                    </form>
-                )}
+                    </div>
 
-                {/* Response Area - fixed height */}
-                {showChat && (
-                    <div style={{
-                        height: "30px",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "10px"
-                    }}>
-                        <div>
-                            <div style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px'
-                            }}>
-                                <Loader isLoading={isLoading}/>
-                                {parserResponse && (
-                                    <>
+                    {/* Chat Form - fixed height */}
+                    {showChat && (
+                        <form onSubmit={(e) => handleChatSubmit(e)} style={{
+                            display: "flex",
+                        }}>
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                value={chatInput}
+                                onChange={(e) => setChatInput(e.target.value)}
+                                placeholder="What would you like to do? Try asking me to navigate to a certain tab..."
+                                style={{
+                                    flex: 1,
+                                    padding: "10px",
+                                    fontSize: "16px",
+                                    borderRadius: "5px 0 0 5px",
+                                    border: "1px solid #ccc",
+                                    borderRight: "none",
+                                    outline: "none",
+                                }}
+                            />
+                            <button
+                                type="submit"
+                                style={{
+                                    padding: "10px 20px",
+                                    fontSize: "16px",
+                                    backgroundColor: "#007bff",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "0 5px 5px 0",
+                                    cursor: "pointer",
+                                }}
+                            >
+                                {"➤"}
+                            </button>
+                        </form>
+                    )}
+
+                    {/* Response Area - fixed height */}
+                    {showChat && (
+                        <div style={{
+                            height: "30px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "10px"
+                        }}>
+                            <div>
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '12px'
+                                }}>
+                                    <Loader isLoading={isLoading}/>
+                                    {parserResponse && (
+                                        <>
                                         <span style={{
                                             fontSize: "14px",
                                             color: currentTheme.text,
                                         }}>
                                             {parserResponse}
                                         </span>
-                                        {!isLoading && (
-                                            <>
+                                            {!isLoading && (
+                                                <>
                                                 <span
                                                     onClick={() => setResponseModal({
                                                         isOpen: true,
@@ -625,87 +628,98 @@ function App() {
                                                 >
                                                     Show Details
                                                 </span>
-                                                <span
-                                                    onClick={() => {
-                                                        setParserResponse("");
-                                                        setAgentsResponses([]);
-                                                    }}
-                                                    style={{
-                                                        fontSize: "14px",
-                                                        cursor: "pointer",
-                                                        backgroundColor: currentTheme.surface2,
-                                                        padding: "6px 12px",
-                                                        borderRadius: "4px",
-                                                        transition: "all 0.2s ease",
-                                                        border: `1px solid ${currentTheme.border}`,
-                                                        color: currentTheme.text,
-                                                        whiteSpace: 'nowrap',
-                                                    }}
-                                                >
+                                                    <span
+                                                        onClick={() => {
+                                                            setParserResponse("");
+                                                            setAgentsResponses([]);
+                                                        }}
+                                                        style={{
+                                                            fontSize: "14px",
+                                                            cursor: "pointer",
+                                                            backgroundColor: currentTheme.surface2,
+                                                            padding: "6px 12px",
+                                                            borderRadius: "4px",
+                                                            transition: "all 0.2s ease",
+                                                            border: `1px solid ${currentTheme.border}`,
+                                                            color: currentTheme.text,
+                                                            whiteSpace: 'nowrap',
+                                                        }}
+                                                    >
                                                     Clear
                                                 </span>
-                                            </>
-                                        )}
-                                    </>
-                                )}
+                                                </>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                )}
+                    )}
 
-                {/* Main Content Area - takes remaining height */}
-                <div style={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "20px",
-                    minHeight: 0,
-                    overflow: "hidden"
-                }}>
-                    {/* Navigation */}
-                    {<div style={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(6, 1fr)",
-                        gap: "10px",
-                        padding: "10px",
-                        backgroundColor: currentTheme.surface,
-                        borderRadius: "5px",
-                    }}>
-                        {["transactions", "accounts", "settings", "dashboard", "profile", "notifications"].map((page) => (
-                            <button
-                                key={page}
-                                onClick={() => setCurrentPage(page)}
-                                style={{
-                                    padding: "10px",
-                                    fontSize: "16px",
-                                    backgroundColor: currentPage === page ? currentTheme.primary : "transparent",
-                                    color: currentPage === page ? "white" : currentTheme.text,
-                                    border: "none",
-                                    borderRadius: "5px",
-                                    cursor: "pointer",
-                                    transition: "all 0.3s ease",
-                                    width: "100%",
-                                }}
-                            >
-                                {page.charAt(0).toUpperCase() + page.slice(1)}
-                            </button>
-                        ))}
-                    </div>}
-
-                    {/* Filters */}
-                    {filtersSection()}
-
-                    {/* Content Area - scrollable */}
+                    {/* Main Content Area - takes remaining height */}
                     <div style={{
                         flex: 1,
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "20px",
                         minHeight: 0,
-                        overflow: "auto",
-                        backgroundColor: currentTheme.surface,
-                        borderRadius: "5px",
-                        padding: "20px"
+                        overflow: "hidden"
                     }}>
-                        {renderCurrentPage()}
+                        {/* Navigation */}
+                        {<div style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(6, 1fr)",
+                            gap: "10px",
+                            padding: "10px",
+                            backgroundColor: currentTheme.surface,
+                            borderRadius: "5px",
+                        }}>
+                            {["transactions", "accounts", "settings", "dashboard", "profile", "notifications"].map((page) => (
+                                <button
+                                    key={page}
+                                    onClick={() => setCurrentPage(page)}
+                                    style={{
+                                        padding: "10px",
+                                        fontSize: "16px",
+                                        backgroundColor: currentPage === page ? currentTheme.primary : "transparent",
+                                        color: currentPage === page ? "white" : currentTheme.text,
+                                        border: "none",
+                                        borderRadius: "5px",
+                                        cursor: "pointer",
+                                        transition: "all 0.3s ease",
+                                        width: "100%",
+                                    }}
+                                >
+                                    {page.charAt(0).toUpperCase() + page.slice(1)}
+                                </button>
+                            ))}
+                        </div>}
+
+                        {/* Filters */}
+                        {filtersSection()}
+
+                        {/* Content Area - scrollable */}
+                        <div style={{
+                            flex: 1,
+                            minHeight: 0,
+                            overflow: "auto",
+                            backgroundColor: currentTheme.surface,
+                            borderRadius: "5px",
+                            padding: "20px"
+                        }}>
+                            {renderCurrentPage()}
+                        </div>
                     </div>
+                </div>
+                <div style={{height: "100%", flex: 1, border: "0px solid purple", paddingInline:20}}>
+                    <Chatbot messages={[]}
+                             isTyping={false}
+                             onSubmit={(e: Event) => handleChatSubmit(undefined, chatInput)}
+                             inputText={chatInput}
+                             setInputText={setChatInput}
+                             onReset={() => {
+                             }}
+                    />
                 </div>
             </div>
 
