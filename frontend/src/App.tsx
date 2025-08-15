@@ -11,6 +11,7 @@ import {Loader} from './components/Loader';
 import {generatePastelColor} from './utils/color-utils';
 import TransactionList from "./components/TransactionList.tsx";
 import Chatbot from "./components/Chatbot.tsx";
+import {IMessage} from "./types.ts";
 
 const MODE: "prod" | "dev" = "dev" //"dev"
 // @ts-ignore
@@ -153,7 +154,7 @@ function App() {
         isOpen: false,
         responses: [],
     });
-
+    const [messages, setMessages] = useState<IMessage[]>([])
     const currentTheme = theme === 'dark' ? darkTheme : lightTheme;
 
     const Agents: Record<string, { augmentWithContext: Function, resolve: Function }> = {
@@ -271,26 +272,31 @@ function App() {
         if (e) {
             e.preventDefault()
         }
+        setMessages(prev => [...prev, {role: 'user', content: prompt}])
         setIsLoading(true)
         setParserResponse("")
         setAgentsResponses([])
         console.log("loading...")
         try {
-            const parseUserPromptRes = await axios.post(
+            const parserBotResponse = await axios.post(
                 `${baseUrl}/parse-user-prompt`,
                 {
                     prompt: prompt ? prompt : chatInput,
-                    context: {currentPage: currentPage}
+                    context: {currentPage: currentPage},
+                    history: messages
                 },
                 {withCredentials: true},
             )
-            const {response, agentTasks} = parseUserPromptRes.data
+            const {response, agentTasks} = parserBotResponse.data
             if (!(response || agentTasks)) {
                 setChatInput("")
                 setParserResponse("Server error")
                 return
             }
-            setParserResponse(parseUserPromptRes.data.response)
+            const responseText = parserBotResponse.data.response
+            setParserResponse(responseText)
+
+            setMessages(prev => [...prev, {role: 'assistant', content: responseText}])
             const augmentedTasks = agentTasks.map((task: { agent: string, prompt: string }) => {
                     const agent = Agents[task["agent"]]
                     if (agent?.augmentWithContext) {
@@ -548,7 +554,7 @@ function App() {
                     {/* Chat Form - fixed height */}
                     {showChat && (
                         <form onSubmit={(e) => handleChatSubmit(e)} style={{
-                            display: "flex",
+                            display: "none",
                         }}>
                             <input
                                 ref={inputRef}
@@ -711,13 +717,15 @@ function App() {
                         </div>
                     </div>
                 </div>
-                <div style={{height: "100%", flex: 1, border: "0px solid purple", paddingInline:20}}>
-                    <Chatbot messages={[]}
+                <div style={{height: "100%", flex: 1, border: "0px solid purple", paddingInline: 20}}>
+                    <Chatbot messages={messages}
                              isTyping={false}
                              onSubmit={(e: Event) => handleChatSubmit(undefined, chatInput)}
                              inputText={chatInput}
                              setInputText={setChatInput}
                              onReset={() => {
+                                 setMessages([])
+                                 setChatInput('')
                              }}
                     />
                 </div>

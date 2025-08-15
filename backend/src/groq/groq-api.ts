@@ -11,12 +11,14 @@ const groq = new Groq({apiKey: process.env.GROQ_API_KEY, httpAgent: httpsAgent})
 
 
 export async function getGroqResponse(prompt: string, messageHistory: ChatMessage[]) {
-    log({messageHistory, prompt});
+    // log({messageHistory, prompt});
     try {
         const chatCompletion = await groq.chat.completions.create({
             messages: messageHistory.concat([{role: "user", content: prompt}]),
             // model: "llama3-8b-8192",
-            model: "llama-3.3-70b-versatile",
+            // model: "llama-3.3-70b-versatile",
+            model: 'llama-3.1-8b-instant',
+            response_format: {type:"json_object"},
             temperature: 0,
             max_tokens: 1024,
             top_p: 1,

@@ -66,17 +66,17 @@ const Chatbot = ({ messages, isTyping, onSubmit, inputText, setInputText, onRese
           {messages.map(message => (
             <div
               key={message.id}
-              className={`message ${message.sender === 'bot' ? 'bot-message' : 'user-message'}`}
+              className={`message ${message.role === 'assistant' ? 'bot-message' : 'user-message'}`}
             >
               <div className="message-content">
                 <div style={{display:"flex",flexDirection:"column",gap:10}}>
-                  {message.text}
+                  {message.content}
 
                   {/*{message.pythonWriter?.script && <code style={{background:"#333", color:"#eee", padding:"10px"}}>{message.pythonWriter.script}</code>}*/}
                   {/*{message.pythonWriter?.script && <CodeBlock code={message.pythonWriter.script}/>}*/}
                   {message.pythonWriter?.result && <div>{message.pythonWriter.result.toString()}</div>}
                 </div>
-                <span className="message-time">{formatTime(message.timestamp)}</span>
+                {/*<span className="message-time">{formatTime(message.timestamp)}</span>*/}
               </div>
             </div>
           ))}
@@ -108,7 +108,7 @@ const Chatbot = ({ messages, isTyping, onSubmit, inputText, setInputText, onRese
             value={inputText}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
-            placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
+            placeholder="How can I help?"
             disabled={isTyping}
             style={{
               width: "100%",
