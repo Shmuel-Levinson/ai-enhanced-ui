@@ -205,7 +205,6 @@ function App() {
                 }
             },
             resolve: (task: any) => {
-                console.log("DASHBOARD SIMULATION!", task.response.dashboardState)
                 setWidgets(task.response.dashboardState)
             }
         }
@@ -325,6 +324,8 @@ function App() {
                         setIsLoading(false)
                     }
                     setAgentsResponses(prev => [...prev, agentResponse])
+                    setMessages(prev=>[...prev, {role:'assistant',content: agentResponse}])
+
                 }, index * 1000);
             });
 

@@ -12,9 +12,10 @@ const groq = new Groq({apiKey: process.env.GROQ_API_KEY, httpAgent: httpsAgent})
 
 export async function getGroqResponse(prompt: string, messageHistory: ChatMessage[]) {
     // log({messageHistory, prompt});
+    const newHistory: ChatMessage[] = messageHistory.concat([userMessage(prompt)]);
     try {
         const chatCompletion = await groq.chat.completions.create({
-            messages: messageHistory.concat([{role: "user", content: prompt}]),
+            messages: newHistory,
             // model: "llama3-8b-8192",
             // model: "llama-3.3-70b-versatile",
             model: 'llama-3.1-8b-instant',
@@ -25,7 +26,7 @@ export async function getGroqResponse(prompt: string, messageHistory: ChatMessag
             stream: false,
             stop: null
         });
-        const newHistory: ChatMessage[] = messageHistory.concat([{role: "user", content: prompt}]);
+
         return {
             response: chatCompletion.choices[0].message.content,
             messageHistory: newHistory

@@ -11,10 +11,10 @@ export const ParserAgent = {
         const history = body.history || [];
         const fullHistory = [
             systemMessage(PARSER_DEFINITION_PROMPT),
-            ...history.slice(-5),
+            ...history,
             // userMessage(JSON.stringify(prompt))
         ]
-        const answer = await getGroqResponse('only do this: ' + prompt, fullHistory);
+        const answer = await getGroqResponse(prompt, fullHistory);
         let response : { response: string, agentTasks: string[] };
         if (answer?.response) {
             try {
