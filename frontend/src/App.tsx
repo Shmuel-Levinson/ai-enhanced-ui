@@ -720,14 +720,10 @@ function App() {
                 </div>
                 <div style={{height: "100%", flex: 1, border: "0px solid purple", paddingInline: 20}}>
                     <Chatbot messages={messages}
-                             isTyping={false}
-                             onSubmit={(e: Event) => handleChatSubmit(undefined, chatInput)}
+                             isWorking={isLoading}
+                             onSubmit={() => handleChatSubmit(undefined, chatInput)}
                              inputText={chatInput}
                              setInputText={setChatInput}
-                             onReset={() => {
-                                 setMessages([])
-                                 setChatInput('')
-                             }}
                     />
                 </div>
             </div>

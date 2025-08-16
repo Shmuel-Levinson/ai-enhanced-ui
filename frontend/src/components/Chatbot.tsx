@@ -1,5 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import './Chatbot.css';
+import { Loader } from './Loader';
 
 interface Message {
   id: string | number;
@@ -13,13 +14,13 @@ interface Message {
 
 interface ChatbotProps {
   messages: Message[];
-  isTyping: boolean;
+  isWorking: boolean;
   onSubmit: (inputText: string) => void;
   inputText: string;
   setInputText: (text: string) => void;
 }
 
-const Chatbot: React.FC<ChatbotProps> = ({ messages, isTyping, onSubmit, inputText, setInputText }) => {
+const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputText, setInputText }) => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   
@@ -37,11 +38,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isTyping, onSubmit, inputTe
   useEffect(() => {
     scrollToBottom();
     
-    // Focus input after bot responds (when isTyping changes from true to false)
-    if (!isTyping && messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
+    // Focus input after bot responds (when isWorking changes from true to false)
+    if (!isWorking && messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
       inputRef.current?.focus();
     }
-  }, [messages, isTyping]);
+  }, [messages, isWorking]);
   
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(e.target.value);
@@ -89,49 +90,41 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isTyping, onSubmit, inputTe
             </div>
           ))}
 
-          {isTyping && (
-            <div>
-              <div className="typing-indicator">
-                <span></span>
-                <span></span>
-                <span></span>
-              </div>
-            </div>
-          )}
-
           <div ref={messagesEndRef}/>
         </div>
         <div className="chatbot-suggestions">
-          {/*<p>Try asking:</p>*/}
+          <Loader isLoading={isWorking}/>
+          <p>Try asking:</p>
           <div className="suggestion-buttons">
-            {/*<button onClick={() => setInputText("What can you help me with?")}>Capabilities</button>*/}
-            {/*<button onClick={() => setInputText("Tell me a fun fact")}>Fun Fact</button>*/}
-            {/*<button onClick={() => setInputText("How does AI work?")}>About AI</button>*/}
-            {/*<button onClick={() => setInputText("What's the weather like today?")}>Weather</button>*/}
+            <button onClick={() => setInputText("What can you help me with?")}>Capabilities</button>
+            <button onClick={() => setInputText("Tell me a fun fact")}>Fun Fact</button>
+            <button onClick={() => setInputText("How does AI work?")}>About AI</button>
+            <button onClick={() => setInputText("What's the weather like today?")}>Weather</button>
           </div>
         </div>
-        <form style={{marginTop: "auto"}} className="chatbot-input" onSubmit={handleSubmit}>
+        {<form style={{marginTop: "auto"}} className="chatbot-input" onSubmit={handleSubmit}>
           <textarea
-            ref={inputRef}
-            value={inputText}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder="How can I help?"
-            disabled={isTyping}
-            style={{
-              width: "100%",
-              // outline: "none",
-              // border: "none",
-              // maxHeight: 80,
-              resize: "none",
-            }}
+              ref={inputRef}
+              value={inputText}
+              onChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              placeholder="How can I help?"
+              disabled={isWorking}
+              style={{
+                width: "100%",
+                // outline: "none",
+                // border: "none",
+                // maxHeight: 80,
+                resize: "none",
+              }}
           />
-          <div style={{height:"100%", display:"flex",}}>
-            <button style={{marginTop:"auto",height:"3rem",width:"3rem"}} type="submit" disabled={isTyping || !inputText.trim()}>
+          <div style={{height: "100%", display: "flex",}}>
+            <button style={{marginTop: "auto", height: "3rem", width: "3rem"}} type="submit"
+                    disabled={isWorking || !inputText.trim()}>
               <span className="send-icon">➤</span>
             </button>
           </div>
-        </form>
+        </form>}
       </div>
     </>
   )
