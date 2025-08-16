@@ -1,7 +1,25 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './Chatbot.css';
 
-const Chatbot = ({ messages, isTyping, onSubmit, inputText, setInputText, onReset }) => {
+interface Message {
+  id: string | number;
+  role: 'assistant' | 'user';
+  content: string;
+  pythonWriter?: {
+    script?: string;
+    result?: unknown;
+  };
+}
+
+interface ChatbotProps {
+  messages: Message[];
+  isTyping: boolean;
+  onSubmit: (inputText: string) => void;
+  inputText: string;
+  setInputText: (text: string) => void;
+}
+
+const Chatbot: React.FC<ChatbotProps> = ({ messages, isTyping, onSubmit, inputText, setInputText }) => {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   
@@ -20,16 +38,16 @@ const Chatbot = ({ messages, isTyping, onSubmit, inputText, setInputText, onRese
     scrollToBottom();
     
     // Focus input after bot responds (when isTyping changes from true to false)
-    if (!isTyping && messages.length > 0 && messages[messages.length - 1].sender === 'bot') {
+    if (!isTyping && messages.length > 0 && messages[messages.length - 1].role === 'assistant') {
       inputRef.current?.focus();
     }
   }, [messages, isTyping]);
   
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(e.target.value);
   };
   
-  const handleKeyDown = (e) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     // If Enter is pressed without Shift key
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault(); // Prevent default behavior (new line)
@@ -38,7 +56,7 @@ const Chatbot = ({ messages, isTyping, onSubmit, inputText, setInputText, onRese
     // If Shift+Enter is pressed, let the default behavior happen (new line)
   };
   
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
     e.preventDefault();
     
     if (!inputText?.trim()) return;
@@ -46,11 +64,6 @@ const Chatbot = ({ messages, isTyping, onSubmit, inputText, setInputText, onRese
     // Call the onSubmit function passed from parent
     onSubmit(inputText);
     setInputText('');
-  };
-  
-  // Format timestamp
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
   return (
     <>
@@ -71,12 +84,7 @@ const Chatbot = ({ messages, isTyping, onSubmit, inputText, setInputText, onRese
               <div className="message-content">
                 <div style={{display:"flex",flexDirection:"column",gap:10}}>
                   {message.content}
-
-                  {/*{message.pythonWriter?.script && <code style={{background:"#333", color:"#eee", padding:"10px"}}>{message.pythonWriter.script}</code>}*/}
-                  {/*{message.pythonWriter?.script && <CodeBlock code={message.pythonWriter.script}/>}*/}
-                  {message.pythonWriter?.result && <div>{message.pythonWriter.result.toString()}</div>}
                 </div>
-                {/*<span className="message-time">{formatTime(message.timestamp)}</span>*/}
               </div>
             </div>
           ))}
