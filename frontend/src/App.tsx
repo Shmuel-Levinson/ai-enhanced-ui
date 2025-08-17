@@ -13,8 +13,7 @@ import TransactionList from "./components/TransactionList.tsx";
 import Chatbot from "./components/Chatbot.tsx";
 import {IMessage} from "./types.ts";
 
-const MODE: "prod" | "dev" = "dev" //"dev"
-// @ts-ignore
+const MODE: "prod" | "dev" = "prod" //"dev"
 const baseUrl = MODE === "prod" ? "https://ai-enhanced-ui.onrender.com" : "http://localhost:5000"
 
 const initialFilterState = {
@@ -575,7 +574,7 @@ function App() {
                                 type="text"
                                 value={chatInput}
                                 onChange={(e) => setChatInput(e.target.value)}
-                                placeholder="What would you like to do? Try asking me to navigate to a certain tab..."
+                            placeholder="What would you like to do? Try asking me to navigate to a certain tab"
                                 style={{
                                     flex: 1,
                                     padding: "10px",
