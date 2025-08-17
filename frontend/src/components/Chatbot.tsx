@@ -1,19 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import './Chatbot.css';
 import { Loader } from './Loader';
+import {IMessage} from "../types.ts";
 
-interface Message {
-  id: string | number;
-  role: 'assistant' | 'user';
-  content: string;
-  pythonWriter?: {
-    script?: string;
-    result?: unknown;
-  };
-}
+
 
 interface ChatbotProps {
-  messages: Message[];
+  messages: IMessage[];
   isWorking: boolean;
   onSubmit: (inputText: string) => void;
   inputText: string;
@@ -21,8 +14,8 @@ interface ChatbotProps {
 }
 
 const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputText, setInputText }) => {
-  const messagesEndRef = useRef(null);
-  const inputRef = useRef(null);
+  const messagesEndRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   
   // Function to scroll to bottom of messages
   const scrollToBottom = () => {
@@ -73,9 +66,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputT
         </div>
         <div className="messages-container"
              style={{marginTop: '10px', flexGrow: 1, overflowY: 'auto', maxWidth:"800px", paddingInline:10}}>
-          {messages.map(message => (
+          {messages.map((message,i) => (
             <div
-              key={message.id}
+              key={`message-${i}`}
               className={`message ${message.role === 'assistant' ? 'bot-message' : 'user-message'}`}
             >
               <div className="message-content">
