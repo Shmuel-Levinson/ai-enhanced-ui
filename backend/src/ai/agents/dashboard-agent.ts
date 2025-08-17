@@ -1,6 +1,4 @@
-import {getGroqResponse, systemMessage, userMessage} from "../../groq/groq-api";
-import {extractJsonFromString} from "../../utils/object-utils";
-
+import {createAgent} from "./agent";
 const DASHBOARD_AGENT_DEFINITION_PROMPT = `
     Act as a dashboard agent for a banking app.
     You are responsible for modifying the dashboard.
@@ -38,26 +36,10 @@ const DASHBOARD_AGENT_DEFINITION_PROMPT = `
     If the user wants to move something 'left' or 'right', change the column in the gridArea by 1.
 `
 
-export const DashboardAgent = {
+
+export const DashboardAgent = createAgent({
     name: "Dashboard Agent",
     description: "Allows modifying the dashboard",
-
-    getResponse: async ({prompt, context}: {prompt: string, context: any}): Promise<any> => {
-
-        const fullHistory = [
-            systemMessage(DASHBOARD_AGENT_DEFINITION_PROMPT),
-            userMessage("Current Dashboard state is:\n" + JSON.stringify(context.dashboardState))]
-
-        const answer = await getGroqResponse(prompt, fullHistory);
-        let response = {}
-        if (answer?.response) {
-            try {
-                response = extractJsonFromString(answer.response.replace('\n', '').trim());
-            } catch (e) {
-                console.error(e);
-                response = answer.response
-            }
-        }
-        return response;
-    }
-}
+    definitionPrompt: DASHBOARD_AGENT_DEFINITION_PROMPT,
+    contextKey: "dashboardState"
+});

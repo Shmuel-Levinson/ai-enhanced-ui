@@ -1,5 +1,4 @@
-import {getGroqResponse, systemMessage, userMessage} from "../../groq/groq-api";
-import {extractJsonFromString} from "../../utils/object-utils";
+import { createAgent } from "./agent";
 
 export const NAVIGATION_AGENT_DEFINITION_PROMPT = `
     Act as a navigation agent for a banking app.
@@ -17,26 +16,10 @@ export const NAVIGATION_AGENT_DEFINITION_PROMPT = `
     - 'page' is the page the user should be navigated to.
     If user wants to navigate to a page that is not available, return a notification that the page is not available and stay on the current page.
     `
-export const NavigationAgent = {
+
+export const NavigationAgent = createAgent({
     name: "Navigation Agent",
     description: "Navigates to pages in the app.",
-
-    getResponse: async ({prompt, currentPage}: { prompt: string, currentPage: any }): Promise<any> => {
-
-        const fullHistory = [
-            systemMessage(NAVIGATION_AGENT_DEFINITION_PROMPT),
-            userMessage("Current page is: \n" + currentPage)]
-
-        const answer = await getGroqResponse(prompt, fullHistory);
-        let response = {}
-        if (answer?.response) {
-            try {
-                response = extractJsonFromString(answer.response.replace('\n', '').trim());
-            } catch (e) {
-                console.error(e);
-                response = answer.response
-            }
-        }
-        return response;
-    }
-}
+    definitionPrompt: NAVIGATION_AGENT_DEFINITION_PROMPT,
+    contextKey: "currentPage"
+});

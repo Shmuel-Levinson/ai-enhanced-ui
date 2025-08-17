@@ -1,5 +1,5 @@
-import {getGroqResponse, systemMessage, userMessage} from "../../groq/groq-api";
-import {extractJsonFromString} from "../../utils/object-utils";
+import { createAgent } from "./agent";
+
 export const FILTER_INTERPRETER_DEFINITION_PROMPT = `
 Right now it is ${Date()}.
 
@@ -36,27 +36,10 @@ If the user makes a request unrelated to filtering, return the filterSettings as
 e.g. A user asked to do X, but you can't do that, so you return the filterSettings as is and a kind and professional response that you can't do X.
 
 Do not include any additional text in your response before or after the JSON.`
-export const FilterAgent = {
+
+export const FilterAgent = createAgent({
     name: "Transaction Filters Agent",
     description: "Interprets user requests to update the filter settings and returns a response.",
-
-    getResponse: async ({prompt, context}: {prompt: string, context: any}): Promise<any> => {
-
-        // const history = body.history || [];
-        const fullHistory = [
-            systemMessage(FILTER_INTERPRETER_DEFINITION_PROMPT),
-            userMessage("Current filter settings: \n" + JSON.stringify(context.currentFilter))]
-
-        const answer = await getGroqResponse(prompt, fullHistory);
-        let response = {}
-        if (answer?.response) {
-            try {
-                response = extractJsonFromString(answer.response.replace('\n', '').trim());
-            } catch (e) {
-                console.error(e);
-                response = answer.response
-            }
-        }
-        return response;
-    }
-}
+    definitionPrompt: FILTER_INTERPRETER_DEFINITION_PROMPT,
+    contextKey: "currentFilter"
+});

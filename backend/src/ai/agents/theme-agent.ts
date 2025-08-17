@@ -1,5 +1,4 @@
-import {getGroqResponse, systemMessage, userMessage} from "../../groq/groq-api";
-import {extractJsonFromString} from "../../utils/object-utils";
+import { createAgent } from "./agent";
 
 export const THEME_AGENT_DEFINITION_PROMPT = `
     Act as a theme agent for a banking app.
@@ -22,26 +21,9 @@ export const THEME_AGENT_DEFINITION_PROMPT = `
     Only change to the theme that is explicitly mentioned in the request.
 `
 
-export const ThemeAgent = {
+export const ThemeAgent = createAgent({
     name: "Theme Agent",
     description: "Changes the theme of the app.",
-
-    getResponse: async ({prompt, context}: { prompt: string, context: any }): Promise<any> => {
-
-        const fullHistory = [
-            systemMessage(THEME_AGENT_DEFINITION_PROMPT),
-            userMessage("Current theme is: \n" + context.theme)]
-
-        const answer = await getGroqResponse(prompt, fullHistory);
-        let response = {}
-        if (answer?.response) {
-            try {
-                response = extractJsonFromString(answer.response.replace('\n', '').trim());
-            } catch (e) {
-                console.error(e);
-                response = answer.response
-            }
-        }
-        return response;
-    }
-}
+    definitionPrompt: THEME_AGENT_DEFINITION_PROMPT,
+    contextKey: "theme"
+});
