@@ -7,7 +7,7 @@ type CreateAgentParams = {
     definitionPrompt: string,
     contextKey?: string
 }
-export const createAgent = ({name, description,definitionPrompt,contextKey} :CreateAgentParams) => {
+export const createAgent = ({name, description, definitionPrompt, contextKey} :CreateAgentParams) => {
     return (
         {
             name,

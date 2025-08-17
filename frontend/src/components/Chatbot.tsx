@@ -13,6 +13,9 @@ interface ChatbotProps {
   setInputText: (text: string) => void;
 }
 
+const COMPLEX_REQUEST = `Go to transactions, set filters amount between 50 and 100 and show only january transactions. then go to dashboard
+and add a pie chart breakdown by payment method and a barchart breakdown by category`
+
 const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputText, setInputText }) => {
   const messagesEndRef = useRef<HTMLInputElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -55,6 +58,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputT
     onSubmit(inputText);
     setInputText('');
   };
+
   return (
     <>
       <div style={{display: "flex", flexDirection: "column", height: "100%", maxWidth: "800px", width: "100%"}}>
@@ -89,6 +93,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputT
             <button onClick={() => setInputText("Go to dashboard")}>Go to dashboard</button>
             <button onClick={() => setInputText("Show me only cash transactions")}>Show me only cash transactions</button>
             <button onClick={() => setInputText("Add a text widget to the dashboard")}>Add a text widget to the dashboard</button>
+            <button onClick={() => setInputText(COMPLEX_REQUEST)}>Complex request</button>
           </div>
         </div>
         {<form style={{marginTop: "auto"}} className="chatbot-input" onSubmit={handleSubmit}>

@@ -13,9 +13,8 @@ import TransactionList from "./components/TransactionList.tsx";
 import Chatbot from "./components/Chatbot.tsx";
 import {IMessage} from "./types.ts";
 
-const MODE: "prod" | "dev" = "dev" //"dev"
-// @ts-ignore
-const baseUrl = MODE === "prod" ? "https://ai-enhanced-ui.onrender.com" : "http://localhost:5000"
+const MODE = import.meta.env.VITE_MODE || "prod";
+const baseUrl = import.meta.env.VITE_BASE_URL || "https://ai-enhanced-ui.onrender.com";
 
 const initialFilterState = {
     startDateFilter: "",
@@ -99,36 +98,6 @@ function App() {
     const [isLoading, setIsLoading] = useState(false)
     const [currentPage, setCurrentPage] = useState("transactions")
     const [widgets, setWidgets] = useState<Widget[]>([
-        // {
-        //     id: '1',
-        //     type: 'text',
-        //     data: { text: 'Welcome to your financial dashboard!' },
-        //     gridArea: '1 / 1',
-        //     name: 'Welcome Message',
-        // },
-        // {
-        //     id: '2',
-        //     type: 'pie-chart',
-        //     gridArea: '1 / 2',
-        //     name: 'Payment Methods',
-        //     color: generatePastelColor(),
-        //     groupBy: 'paymentMethod',
-        // },
-        // {
-        //     id: '3',
-        //     type: 'bar-graph',
-        //     gridArea: '2 / 1',
-        //     name: 'Payment Methods',
-        //     color: generatePastelColor(),
-        //     groupBy: 'paymentMethod',
-        // },
-        // {
-        //     id: '4',
-        //     type: 'text',
-        //     data: { text: 'Track your monthly spending goals here...' },
-        //     gridArea: '2 / 2',
-        //     name: 'Goals Tracker',
-        // }
     ]);
     const [theme, setTheme] = useState<string>('light');
     const [settings, setSettings] = useState<Settings>({
@@ -148,7 +117,7 @@ function App() {
             showStatusBar: true,
         }
     });
-    const [showChat, setShowChat] = useState(true);//test
+    const [showChat, setShowChat] = useState(false);//test
     const inputRef = useRef<HTMLInputElement>(null);
     const [responseModal, setResponseModal] = useState<ResponseModal>({
         isOpen: false,
@@ -191,7 +160,6 @@ function App() {
                 }
             },
             resolve: (task: any) => {
-                console.log("NAVIGATION SIMULATION!", task.response.page)
                 setCurrentPage(task.response.page)
             }
         },
@@ -288,7 +256,6 @@ function App() {
         setIsLoading(true)
         setParserResponse("")
         setAgentsResponses([])
-        console.log("loading...")
         try {
             const parserBotResponse = await axios.post(
                 `${baseUrl}/parse-user-prompt`,
@@ -328,7 +295,6 @@ function App() {
                 setTimeout(() => {
                     const agent = Agents[task.agent];
                     if (!agent) {
-                        console.log("No agent found for task", task);
                         return;
                     }
                     agent.resolve(task);
@@ -731,14 +697,14 @@ function App() {
                         </div>
                     </div>
                 </div>
-                <div style={{height: "100%", flex: 1, border: "0px solid purple", paddingInline: 20}}>
+                {showChat && <div style={{height: "100%", flex: 1, border: "0px solid purple", paddingInline: 20}}>
                     <Chatbot messages={messages}
                              isWorking={isLoading}
                              onSubmit={() => handleChatSubmit(undefined, chatInput)}
                              inputText={chatInput}
                              setInputText={setChatInput}
                     />
-                </div>
+                </div>}
             </div>
 
             {responseModal.isOpen && (

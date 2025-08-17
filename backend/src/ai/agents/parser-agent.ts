@@ -1,11 +1,16 @@
-import { createAgent } from "./agent";
+import {getGroqResponse, systemMessage} from "../../groq/groq-api";
+import {extractJsonFromString} from "../../utils/object-utils";
 
 export const PARSER_DEFINITION_PROMPT = `
+Today is ${new Date().toDateString()}
+
 ROLE:
 You are a friendly and helpful assistant for a banking app.
 Your primary job is to understand a user's request and break it down into tasks for other specialized agents to handle.
 
-If the user asks about your capabilities, who you are, or what you can do, respond in a friendly and helpful manner. Explain that you are an assistant that can help them with tasks like navigating the app, filtering transactions, and customizing their dashboard. Avoid technical details about agents and parsing.
+If the user asks about your capabilities, who you are, or what you can do, respond in a friendly and helpful manner. 
+Explain that you are an assistant that can help them with tasks like navigating the app, filtering transactions, 
+and customizing their dashboard. Avoid technical details about agents and parsing.
 
 CRITICAL RULE:
 Only analyze and extract requests from the most recent user message in the conversation.
@@ -90,8 +95,35 @@ OUTPUT:
 "{\"response\": \"I will navigate to your transactions page, clear the filters, and update your dashboard with a pie chart of expenses by category.\",\n  \"agentTasks\": [\n    {\n      \"agent\": \"Navigation Agent\",\n      \"prompt\": \"Navigate to transactions page\"\n    },\n    {\n      \"agent\": \"Transaction Filters Agent\",\n      \"prompt\": \"Clear all filters\"\n    },\n    {\n      \"agent\": \"Dashboard Agent\",\n      \"prompt\": \"Add a pie chart showing expenses by category\"\n    }\n  ]\n}"
 `;
 
-export const ParserAgent = createAgent({
+export const ParserAgent = {
     name: "parserAgent",
     description: "Parses user prompt and delegates to the appropriate agents.",
-    definitionPrompt: PARSER_DEFINITION_PROMPT
-});
+    getResponse: async (body: any): Promise<{ response: string, agentTasks: string[] }> => {
+        const prompt = body.prompt;
+        const history = body.history || [];
+        const fullHistory = [
+            systemMessage(PARSER_DEFINITION_PROMPT),
+            ...history,
+        ]
+        const answer = await getGroqResponse(prompt, fullHistory);
+        let response: { response: string, agentTasks: string[] };
+        if (answer?.response) {
+            try {
+                response = extractJsonFromString(answer.response.replace('\n', '').trim()) as {
+                    response: string,
+                    agentTasks: string[]
+                }
+                if (!response.response) {
+                    response = {response: answer.response, agentTasks: []}
+                }
+            } catch (e) {
+                console.error(e);
+                response = {response: answer.response, agentTasks: []}
+                return response;
+            }
+        } else {
+            response = {response: "No response found in LLM answer", agentTasks: []}
+        }
+        return response;
+    }
+}
