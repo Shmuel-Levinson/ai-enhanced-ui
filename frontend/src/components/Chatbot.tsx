@@ -30,11 +30,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputT
   };
 
   useEffect(() => {
-    // Focus input when component mounts
     inputRef.current?.focus();
   }, []);
-  
-  // Scroll to bottom when messages change
+
   useEffect(() => {
     scrollToBottom();
     
@@ -49,12 +47,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputT
   };
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // If Enter is pressed without Shift key
     if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault(); // Prevent default behavior (new line)
+      e.preventDefault();
       handleSubmit(e);
     }
-    // If Shift+Enter is pressed, let the default behavior happen (new line)
   };
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -94,12 +90,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputT
         </div>
         <div className="chatbot-suggestions">
           <Loader isLoading={isWorking}/>
-          <p>Try asking:</p>
+          <p>Try these</p>
           <div className="suggestion-buttons">
-            <button onClick={() => setInputText("What can you help me with?")}>Capabilities</button>
-            <button onClick={() => setInputText("Tell me a fun fact")}>Fun Fact</button>
-            <button onClick={() => setInputText("How does AI work?")}>About AI</button>
-            <button onClick={() => setInputText("What's the weather like today?")}>Weather</button>
+            <button onClick={() => setInputText("What can you help me with?")}>What can you help me with?</button>
+            <button onClick={() => setInputText("Go to dashboard")}>Go to dashboard</button>
+            <button onClick={() => setInputText("Show me only cash transactions")}>Show me only cash transactions</button>
+            <button onClick={() => setInputText("Add a text widget to the dashboard")}>Add a text widget to the dashboard</button>
           </div>
         </div>
         {<form style={{marginTop: "auto"}} className="chatbot-input" onSubmit={handleSubmit}>

@@ -13,6 +13,7 @@ import {NavigationAgent} from "./ai/agents/navigation-agent";
 import {GoogleGenerativeAI} from "@google/generative-ai";
 import {GeminiAgent} from "./gemini/gemini-api";
 import {DashboardAgent} from "./ai/agents/dashboard-agent";
+import {ThemeAgent} from "./ai/agents/theme-agent";
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ const AGENTS: Record<string, any> = {
     "Transaction Filters Agent": FilterAgent,
     "Navigation Agent": NavigationAgent,
     "Dashboard Agent": DashboardAgent,
+    "Theme Agent": ThemeAgent,
 };
 
 app.get('/ping', async (req: Request, res: Response, next: NextFunction) => {

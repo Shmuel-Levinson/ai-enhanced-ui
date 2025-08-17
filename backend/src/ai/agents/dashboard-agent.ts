@@ -1,5 +1,4 @@
 import {getGroqResponse, systemMessage, userMessage} from "../../groq/groq-api";
-import {NAVIGATION_AGENT_DEFINITION_PROMPT} from "./navigaion-definition-prompt";
 import {extractJsonFromString} from "../../utils/object-utils";
 
 const DASHBOARD_AGENT_DEFINITION_PROMPT = `

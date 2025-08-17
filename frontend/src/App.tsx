@@ -207,6 +207,19 @@ function App() {
             resolve: (task: any) => {
                 setWidgets(task.response.dashboardState)
             }
+        },
+        "Theme Agent": {
+            augmentWithContext: (task: any) => {
+                return {
+                    ...task,
+                    context: {
+                        theme: theme
+                    }
+                }
+            },
+            resolve: (task: any) => {
+                setTheme(task.response.theme)
+            }
         }
     }
 
