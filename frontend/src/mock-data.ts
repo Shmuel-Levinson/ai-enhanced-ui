@@ -1,93 +1,93 @@
 export const TRANSACTIONS = [
     {
-        "id": 1,
-        "date": "2025-08-10",
-        "amount": -50.0,
-        "type": "expense",
-        "category": "groceries",
-        "description": "Supermarket",
-        "paymentMethod": "card"
+        id: 1,
+        date: "2025-08-10",
+        amount: -50.0,
+        type: "expense",
+        category: "groceries",
+        description: "Supermarket",
+        paymentMethod: "card"
     },
     {
-        "id": 2,
-        "date": "2025-09-02",
-        "amount": 1000.0,
-        "type": "income",
-        "category": "salary",
-        "description": "Monthly salary",
-        "paymentMethod": "bank transfer"
+        id: 2,
+        date: "2025-09-02",
+        amount: 1000.0,
+        type: "income",
+        category: "salary",
+        description: "Monthly salary",
+        paymentMethod: "bank transfer"
     },
     {
-        "id": 3,
-        "date": "2025-08-25",
-        "amount": -30.0,
-        "type": "expense",
-        "category": "travel",
-        "description": "Bus ticket",
-        "paymentMethod": "cash"
+        id: 3,
+        date: "2025-08-25",
+        amount: -30.0,
+        type: "expense",
+        category: "travel",
+        description: "Bus ticket",
+        paymentMethod: "cash"
     },
     {
-        "id": 4,
-        "date": "2025-08-13",
-        "amount": -20.0,
-        "type": "expense",
-        "category": "gas",
-        "description": "Gas station",
-        "paymentMethod": "card"
+        id: 4,
+        date: "2025-08-13",
+        amount: -20.0,
+        type: "expense",
+        category: "gas",
+        description: "Gas station",
+        paymentMethod: "card"
     },
     {
-        "id": 5,
-        "date": "2025-09-09",
-        "amount": -15.0,
-        "type": "expense",
-        "category": "groceries",
-        "description": "Convenience store",
-        "paymentMethod": "cash"
+        id: 5,
+        date: "2025-09-09",
+        amount: -15.0,
+        type: "expense",
+        category: "groceries",
+        description: "Convenience store",
+        paymentMethod: "cash"
     },
     {
-        "id": 6,
-        "date": "2025-08-29",
-        "amount": -40.0,
-        "type": "expense",
-        "category": "travel",
-        "description": "Taxi ride",
-        "paymentMethod": "cash"
+        id: 6,
+        date: "2025-08-29",
+        amount: -40.0,
+        type: "expense",
+        category: "travel",
+        description: "Taxi ride",
+        paymentMethod: "cash"
     },
     {
-        "id": 7,
-        "date": "2025-08-08",
-        "amount": -25.0,
-        "type": "expense",
-        "category": "gas",
-        "description": "Gas station",
-        "paymentMethod": "card"
+        id: 7,
+        date: "2025-08-08",
+        amount: -25.0,
+        type: "expense",
+        category: "gas",
+        description: "Gas station",
+        paymentMethod: "card"
     },
     {
-        "id": 8,
-        "date": "2025-08-15",
-        "amount": -60.0,
-        "type": "expense",
-        "category": "groceries",
-        "description": "Supermarket",
-        "paymentMethod": "card"
+        id: 8,
+        date: "2025-08-15",
+        amount: -60.0,
+        type: "expense",
+        category: "groceries",
+        description: "Supermarket",
+        paymentMethod: "card"
     },
     {
-        "id": 9,
-        "date": "2025-08-21",
-        "amount": 500.0,
-        "type": "income",
-        "category": "freelance",
-        "description": "Freelance project",
-        "paymentMethod": "cheque"
+        id: 9,
+        date: "2025-08-21",
+        amount: 500.0,
+        type: "income",
+        category: "freelance",
+        description: "Freelance project",
+        paymentMethod: "cheque"
     },
     {
-        "id": 10,
-        "date": "2025-09-05",
-        "amount": -35.0,
-        "type": "expense",
-        "category": "travel",
-        "description": "Train ticket",
-        "paymentMethod": "card"
+        id: 10,
+        date: "2025-09-05",
+        amount: -35.0,
+        type: "expense",
+        category: "travel",
+        description: "Train ticket",
+        paymentMethod: "card"
     },
     {
         id: 11,

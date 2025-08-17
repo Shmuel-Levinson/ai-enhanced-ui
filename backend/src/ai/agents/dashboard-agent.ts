@@ -18,7 +18,8 @@ const DASHBOARD_AGENT_DEFINITION_PROMPT = `
     {
             id: string,
             type: 'bar-graph' | 'pie-chart' | 'text',
-            gridArea: 'x / y',
+            x: number,
+            y: number,
             name: string,
             color: string,
             groupBy: 'paymentMethod' | 'category' | 'type',
@@ -26,14 +27,14 @@ const DASHBOARD_AGENT_DEFINITION_PROMPT = `
     },
     - 'type' is the type of the widget. Can be "text", "pie-chart", "bar-graph".
     - 'data' is mandatory only for text widgets and should contain a 'text' field.
-    - 'gridArea' is the position of the widget on the dashboard in the format 'row / col' and they can have values 1 or 2.
+    - 'x' and 'y' are the coordinates of the widget on the dashboard, and they can have values 1 or 2.
     - 'groupBy' is the field to group the data by. Can be "paymentMethod", "category", "type".
     
     If the user asks to add a widget without specifying position, add it to the end of the dashboard.
     Only modify the fields that are explicitly mentioned in the request.
     Default color for new widgets is #FEFEFE.
-    If the user wants to move something 'up' or 'down', change the row in the gridArea by 1.
-    If the user wants to move something 'left' or 'right', change the column in the gridArea by 1.
+    If the user wants to move something 'up' or 'down', change the x coordinate by 1.
+    If the user wants to move something 'left' or 'right', change the y coordinate by 1.
 `
 
 

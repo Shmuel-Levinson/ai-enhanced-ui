@@ -7,7 +7,7 @@ import { TextWidget } from './TextWidget';
 interface DashboardProps {
     currentTheme: any;
     widgets: Widget[];
-    onAddWidget: (type: 'pie-chart' | 'bar-graph' | 'text', gridArea: string, color?: string) => void;
+    onAddWidget: (type: 'pie-chart' | 'bar-graph' | 'text', x: number, y: number, color?: string) => void;
     onRemoveWidget: (id: string) => void;
     onUpdateWidgets: (widgets: Widget[]) => void;
     transactions: any[];
@@ -15,41 +15,40 @@ interface DashboardProps {
 }
 
 interface EmptySlot {
-    gridArea: string;
+    x: number;
+    y: number;
 }
 
 function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdateWidgets, transactions, updateWidgetText }: DashboardProps) {
     const [draggedWidget, setDraggedWidget] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedSlot, setSelectedSlot] = useState<string>('');
+    const [selectedSlot, setSelectedSlot] = useState<{ x: number, y: number }>({ x: 0, y: 0 });
     const [editingName, setEditingName] = useState<string | null>(null);
 
     // Define empty slots for 2x2 grid
     const emptySlots: EmptySlot[] = [
-        { gridArea: '1 / 1' },
-        { gridArea: '1 / 2' },
-        { gridArea: '2 / 1' },
-        { gridArea: '2 / 2' },
+        { x: 1, y: 1 },
+        { x: 1, y: 2 },
+        { x: 2, y: 1 },
+        { x: 2, y: 2 },
     ];
 
     const generatePastelColor = () => {
         const hue = Math.floor(Math.random() * 360);
         return `hsl(${hue}, 70%, 90%)`; // High lightness for pastel effect
-        // return `#${hue.toString(16).padStart(6, '0')}`;
     };
-
-    
 
     const handleAddWidget = (type: 'pie-chart' | 'bar-graph' | 'text') => {
         const newWidget = {
             id: Date.now().toString(),
-            gridArea: selectedSlot,
+            x: selectedSlot.x,
+            y: selectedSlot.y,
             type,
             color: generatePastelColor(),
             name: `New ${type}`, // Add default name
         };
         setIsModalOpen(false);
-        onAddWidget(type, selectedSlot, newWidget.color);
+        onAddWidget(type, selectedSlot.x, selectedSlot.y, newWidget.color);
     };
 
     const handleDragStart = (id: string) => {
@@ -60,19 +59,22 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
         e.preventDefault();
     };
 
-    const handleDrop = (targetArea: string) => {
+    const handleDrop = (targetX: number, targetY: number) => {
         if (draggedWidget === null) return;
 
         const newWidgets = [...widgets];
         const draggedIndex = newWidgets.findIndex(w => w.id === draggedWidget);
         
-        if (!newWidgets.some(w => w.gridArea === targetArea)) {
-            newWidgets[draggedIndex].gridArea = targetArea;
+        if (!newWidgets.some(w => w.x === targetX && w.y === targetY)) {
+            newWidgets[draggedIndex].x = targetX;
+            newWidgets[draggedIndex].y = targetY;
         } else {
-            const targetIndex = newWidgets.findIndex(w => w.gridArea === targetArea);
-            const temp = newWidgets[draggedIndex].gridArea;
-            newWidgets[draggedIndex].gridArea = newWidgets[targetIndex].gridArea;
-            newWidgets[targetIndex].gridArea = temp;
+            const targetIndex = newWidgets.findIndex(w => w.x === targetX && w.y === targetY);
+            const { x: tempX, y: tempY } = newWidgets[draggedIndex];
+            newWidgets[draggedIndex].x = newWidgets[targetIndex].x;
+            newWidgets[draggedIndex].y = newWidgets[targetIndex].y;
+            newWidgets[targetIndex].x = tempX;
+            newWidgets[targetIndex].y = tempY;
         }
         
         onUpdateWidgets(newWidgets);
@@ -154,11 +156,11 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
             }}>
                 {/* Render empty slots with plus symbols */}
                 {emptySlots.map((slot) => {
-                    const hasWidget = (widgets || []).some(w => w.gridArea === slot.gridArea);
+                    const hasWidget = (widgets || []).some(w => w.x === slot.x && w.y === slot.y);
                     if (!hasWidget) {
                         return (
                             <div
-                                key={slot.gridArea}
+                                key={`${slot.x}-${slot.y}`}
                                 style={{
                                     backgroundColor: currentTheme.surface2 || '#f0f0f0',
                                     border: '2px dashed ' + (currentTheme.border || '#ddd'),
@@ -166,10 +168,11 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gridArea: slot.gridArea,
+                                    gridColumn: slot.y,
+                                    gridRow: slot.x,
                                 }}
                                 onDragOver={handleDragOver}
-                                onDrop={() => handleDrop(slot.gridArea)}
+                                onDrop={() => handleDrop(slot.x, slot.y)}
                             >
                                 <span
                                     style={{
@@ -178,7 +181,7 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
                                         cursor: 'pointer',
                                     }}
                                     onClick={() => {
-                                        setSelectedSlot(slot.gridArea);
+                                        setSelectedSlot({ x: slot.x, y: slot.y });
                                         setIsModalOpen(true);
                                     }}
                                 >
@@ -198,7 +201,8 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
                             border: `2px solid ${currentTheme.border}`,
                             borderRadius: '8px',
                             padding: '15px',
-                            gridArea: widget.gridArea,
+                            gridColumn: widget.y,
+                            gridRow: widget.x,
                             position: 'relative',
                         }}
                     >
@@ -206,7 +210,7 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
                             draggable
                             onDragStart={() => handleDragStart(widget.id)}
                             onDragOver={handleDragOver}
-                            onDrop={() => handleDrop(widget.gridArea)}
+                            onDrop={() => handleDrop(widget.x, widget.y)}
                             style={{
                                 cursor: 'move',
                                 height: '100%',
@@ -265,7 +269,7 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
                                         color: currentTheme.textMuted || '#666',
                                         fontWeight: 'normal',
                                     }}>
-                                        ({widget.gridArea})
+                                        ({widget.x}, {widget.y})
                                     </span>
                                 </h3>
                             )}
@@ -310,4 +314,4 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
     );
 }
 
-export default Dashboard; 
+export default Dashboard;

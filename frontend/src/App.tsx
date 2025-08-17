@@ -28,7 +28,8 @@ const initialFilterState = {
 
 export interface Widget {
     id: string;
-    gridArea: string;
+    x: number;
+    y: number;
     type: 'pie-chart' | 'bar-graph' | 'text';
     color?: string;
     name: string;
@@ -214,15 +215,17 @@ function App() {
     }, [showChat]);
 
     const applyFilters = () => {
-        const filtered = TRANSACTIONS.filter((transaction) => {
+        const filtered = [...TRANSACTIONS].sort(
+            (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+        ).filter((transaction) => {
             const transactionDate = new Date(transaction.date)
-            const startDateObject = startDate ? new Date(startDate) : new Date(0)
-            const endDateObject = endDate ? new Date(endDate) : new Date()
+            const startDateObject = startDate ? new Date(startDate) : ""
+            const endDateObject = endDate ? new Date(endDate) : ""
             const properMinAmountFilter = (minAmountFilter === undefined || minAmountFilter) === null ? "" : minAmountFilter
             const properMaxAmountFilter = maxAmountFilter === undefined || maxAmountFilter === null ? "" : maxAmountFilter
             return (
-                transactionDate >= startDateObject &&
-                transactionDate <= endDateObject &&
+                (transactionDate >= startDateObject || !startDateObject) &&
+                (transactionDate <= endDateObject || !endDateObject) &&
                 (properMinAmountFilter === "" || Math.abs(transaction.amount) >= Number.parseFloat(properMinAmountFilter)) &&
                 (properMaxAmountFilter === "" || Math.abs(transaction.amount) <= Number.parseFloat(properMaxAmountFilter)) &&
                 (typeFilter === "all" || transaction.type === typeFilter) &&
@@ -454,10 +457,11 @@ function App() {
     }
 
 
-    const handleAddWidget = (type: 'pie-chart' | 'bar-graph' | 'text', gridArea: string, color?: string) => {
+    const handleAddWidget = (type: 'pie-chart' | 'bar-graph' | 'text', x: number, y: number, color?: string) => {
         const newWidget: Widget = {
             id: Date.now().toString(),
-            gridArea,
+            x,
+            y,
             type,
             color: color || generatePastelColor(),
             name: `New ${type}`,
@@ -490,7 +494,7 @@ function App() {
     const toggleTheme = () => {
         setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
     };
-
+    console.log(TRANSACTIONS.length)
     return (
         <>
             <style>{spinKeyframes}</style>

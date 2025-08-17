@@ -13,8 +13,8 @@ interface ChatbotProps {
   setInputText: (text: string) => void;
 }
 
-const COMPLEX_REQUEST = `Go to transactions, set filters amount between 50 and 100 and show only january transactions. then go to dashboard
-and add a pie chart breakdown by payment method and a barchart breakdown by category`
+const COMPLEX_REQUEST = `Go to transactions, set filters amount between 50 and 100 and show only august transactions. then go to dashboard
+and add a pie chart breakdown by payment method and a barchart breakdown by category and also i want to switch to dark theme`
 
 const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputText, setInputText }) => {
   const messagesEndRef = useRef<HTMLInputElement | null>(null);
