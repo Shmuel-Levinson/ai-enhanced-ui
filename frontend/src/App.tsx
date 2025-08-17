@@ -13,7 +13,8 @@ import TransactionList from "./components/TransactionList.tsx";
 import Chatbot from "./components/Chatbot.tsx";
 import {IMessage} from "./types.ts";
 
-const MODE: "prod" | "dev" = "prod" //"dev"
+const MODE: "prod" | "dev" = "dev" //"dev"
+// @ts-ignore
 const baseUrl = MODE === "prod" ? "https://ai-enhanced-ui.onrender.com" : "http://localhost:5000"
 
 const initialFilterState = {
