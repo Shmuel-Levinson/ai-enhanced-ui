@@ -11,12 +11,13 @@ interface ChatbotProps {
   onSubmit: (inputText: string) => void;
   inputText: string;
   setInputText: (text: string) => void;
+  clearMessages: () => void;
 }
 
 const COMPLEX_REQUEST = `Go to transactions, set filters amount between 50 and 100 and show only august transactions. then go to dashboard
 and add a pie chart breakdown by payment method and a barchart breakdown by category and also i want to switch to dark theme`
 
-const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputText, setInputText }) => {
+const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputText, setInputText, clearMessages }) => {
   const messagesEndRef = useRef<HTMLInputElement | null>(null);
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   
@@ -65,6 +66,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ messages, isWorking, onSubmit, inputT
         <div className="">
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <h3></h3>
+            <button onClick={clearMessages} className="clear-button">Clear</button>
           </div>
 
         </div>

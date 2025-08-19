@@ -707,6 +707,7 @@ function App() {
                              onSubmit={() => handleChatSubmit(undefined, chatInput)}
                              inputText={chatInput}
                              setInputText={setChatInput}
+                             clearMessages={() => setMessages([])}
                     />
                 </div>}
             </div>

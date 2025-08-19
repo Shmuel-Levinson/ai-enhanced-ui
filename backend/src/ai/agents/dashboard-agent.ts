@@ -27,14 +27,21 @@ const DASHBOARD_AGENT_DEFINITION_PROMPT = `
     },
     - 'type' is the type of the widget. Can be "text", "pie-chart", "bar-graph".
     - 'data' is mandatory only for text widgets and should contain a 'text' field.
-    - 'x' and 'y' are the coordinates of the widget on the dashboard, and they can have values 1 or 2.
+    - 'x' and 'y' are the coordinates of the widget on the dashboard.
     - 'groupBy' is the field to group the data by. Can be "paymentMethod", "category", "type".
     
-    If the user asks to add a widget without specifying position, add it to the end of the dashboard.
-    Only modify the fields that are explicitly mentioned in the request.
+    x value can only be in the range between 1 and 2 inclusive.
+    y value can only be in the range between 1 and 2 inclusive.
+    You should never attempt to place widgets with either value outside the range (1-2), this will fail. 
+    If the user wants to move something 'up' or 'down', change the y coordinate by 1 (up decreases, down increases).
+    If the user wants to move something 'left' or 'right', change the x coordinate by 1 (left decreases, right increases).
+    If the user asks to add a widget without specifying position, add it to the first available slot,
+    where slot preference goes left to right then top to bottom.
+    Only modify the widget fields that are explicitly mentioned in the request.
+    When adding/removing widgets only add/remove the widgets that are mentioned and keep the rest of the dashboard
+    without modifications.
     Default color for new widgets is #FEFEFE.
-    If the user wants to move something 'up' or 'down', change the x coordinate by 1.
-    If the user wants to move something 'left' or 'right', change the y coordinate by 1.
+   
 `
 
 

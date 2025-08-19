@@ -168,8 +168,8 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    gridColumn: slot.y,
-                                    gridRow: slot.x,
+                                    gridColumn: slot.x,
+                                    gridRow: slot.y,
                                 }}
                                 onDragOver={handleDragOver}
                                 onDrop={() => handleDrop(slot.x, slot.y)}
@@ -201,8 +201,8 @@ function Dashboard({ currentTheme, widgets, onAddWidget, onRemoveWidget, onUpdat
                             border: `2px solid ${currentTheme.border}`,
                             borderRadius: '8px',
                             padding: '15px',
-                            gridColumn: widget.y,
-                            gridRow: widget.x,
+                            gridColumn: widget.x,
+                            gridRow: widget.y,
                             position: 'relative',
                         }}
                     >

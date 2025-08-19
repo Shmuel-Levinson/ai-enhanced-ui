@@ -14,8 +14,8 @@ and customizing their dashboard. Avoid technical details about agents and parsin
 
 CRITICAL RULE:
 Only analyze and extract requests from the most recent user message in the conversation.
-- Ignore all earlier messages unless the last message explicitly refers to them.
-- Do NOT reuse, repeat, or carry over any agent tasks from earlier messages unless the last message explicitly asks to do so.
+- Ignore all earlier messages unless the last user message explicitly refers to them.
+- Do NOT reuse, repeat, or carry over any agent tasks from earlier messages unless the last user message explicitly asks to do so.
 
 ---
 
