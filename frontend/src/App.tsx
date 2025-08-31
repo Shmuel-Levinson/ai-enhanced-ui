@@ -289,7 +289,7 @@ function App() {
             )
 
             const agentExecutorRes = await axios.post(`${baseUrl}/agent-executor`, augmentedTasks)
-            const tasksForResolvers = agentExecutorRes.data
+            const tasksForResolvers = agentExecutorRes.data.responses
             if (tasksForResolvers.length < 1) {
                 setIsLoading(false);
                 return
@@ -306,10 +306,11 @@ function App() {
                         setIsLoading(false)
                     }
                     setAgentsResponses(prev => [...prev, agentResponse])
-                    setMessages(prev=>[...prev, {role:'assistant',content: agentResponse}])
+                    // setMessages(prev=>[...prev, {role:'assistant',content: agentResponse}])
 
                 }, index * 1000);
             });
+            setMessages(prev=>[...prev, {role:'assistant',content: agentExecutorRes.data.summary.response}])
 
 
         } catch (error) {
@@ -532,6 +533,20 @@ function App() {
                             }}
                         >
                             {theme === 'dark' ? "Switch to Light Mode ☀️" : "Switch to Dark Mode 🌙"}
+                        </button>
+                        <button
+                            style={{
+                                padding: "10px 20px",
+                                fontSize: "16px",
+                                backgroundColor: "transparent",
+                                color: currentTheme.text,
+                                border: `1px solid ${currentTheme.border}`,
+                                borderRadius: "5px",
+                                cursor: "pointer",
+                            }}
+                            onClick={()=>setShowChat(prev=>!prev)}
+                        >
+
                         </button>
                     </div>
 

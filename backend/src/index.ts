@@ -27,7 +27,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(helmet()); // Security middleware
 app.use(cookieParser()); // Parse cookies
-app.use(bodyParser.json()   );  // Parse JSON request bodies
+app.use(bodyParser.json());  // Parse JSON request bodies
 app.use(bodyParser.urlencoded({extended: true})); // Parse URL-encoded request bodies
 
 console.log("I'm alive")
@@ -88,7 +88,7 @@ app.post('/parse-user-prompt', async (req: Request, res: Response) => {
 
 app.post('/agent-executor', async (req: Request, res: Response) => {
     const tasks = req.body
-    const responses = await Promise.all(tasks.map((async (task:any) => {
+    const responses = await Promise.all(tasks.map((async (task: any) => {
         const agent: { name: string, getResponse: Function } = AGENTS[task.agent];
         if (!agent) {
             return {
@@ -102,23 +102,39 @@ app.post('/agent-executor', async (req: Request, res: Response) => {
             response: response
         }
     })))
-    res.send(responses);
+    const summary = await getGroqResponse(
+        `You are a summarization agent in a banking app.
+        Please summarize the actions in the following object in a friendly non-technical manner.
+        Provide the summary only without opening or closing statements and without adding details.
+         \n ${JSON.stringify(responses.map(r=>r.response.response))} `,
+        [], {
+        includeHistory: false,
+        jsonResponse: false
+    })
+    const answerObject = {
+        responses,
+        summary
+    }
+
+    res.send(answerObject);
     log('executed');
 })
 
 
 const port = process.env.PORT || 3000;
-async function geminiSanityCheck(){
+
+async function geminiSanityCheck() {
     const agent = new GeminiAgent();
     agent.setSystemInstructions("You are a pirate. always answer like a pirate and be rude")
     const response = await agent.getResponse([
-        {role:"user",content:"What is the capital of France?"},
-        {role:"assistant",content:"Berlin mate"},
-        {role:"user",content:"are you sure??"},
+        {role: "user", content: "What is the capital of France?"},
+        {role: "assistant", content: "Berlin mate"},
+        {role: "user", content: "are you sure??"},
     ]);
     console.log(response);
     console.log('done.')
 }
+
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
     // geminiSanityCheck();

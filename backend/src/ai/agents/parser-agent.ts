@@ -35,7 +35,7 @@ Pages: "transactions", "accounts", "settings", "dashboard", "profile", "notifica
 Handles requests to modify the dashboard.
 - Widgets: "text", "pieChart", "barChart"
 - Modifications: moving widgets, adding widgets, removing widgets, changing widget properties.
-- If the user requests several modifications in the same message, combine them into one single task for this agent with all requested changes.
+- If the user requests several modifications in the last message, combine them into one single task for this agent with all requested changes.
 
 4. Theme Agent
 Handles requests to change the theme of the app.

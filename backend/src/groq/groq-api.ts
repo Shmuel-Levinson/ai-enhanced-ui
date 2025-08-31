@@ -10,7 +10,7 @@ const httpsAgent = new https.Agent({rejectUnauthorized: false});
 const groq = new Groq({apiKey: process.env.GROQ_API_KEY, httpAgent: httpsAgent});
 
 
-export async function getGroqResponse(prompt: string, messageHistory: ChatMessage[]) {
+export async function getGroqResponse(prompt: string, messageHistory: ChatMessage[], options:{jsonResponse?:boolean, includeHistory?:boolean}={jsonResponse:true,includeHistory:true}) {
     // log({messageHistory, prompt});
     const newHistory: ChatMessage[] = messageHistory.concat([userMessage(prompt)]);
     try {
@@ -19,18 +19,20 @@ export async function getGroqResponse(prompt: string, messageHistory: ChatMessag
             // model: "llama3-8b-8192",
             // model: "llama-3.3-70b-versatile",
             model: 'llama-3.1-8b-instant',
-            response_format: {type:"json_object"},
+            response_format: {type: options?.jsonResponse ? 'json_object':'text'},
             temperature: 0,
             max_tokens: 1024,
             top_p: 1,
             stream: false,
-            stop: null
+            stop: null,
         });
-
-        return {
+        const res: any = {
             response: chatCompletion.choices[0].message.content,
-            messageHistory: newHistory
         }
+        if (options?.includeHistory){
+            res.messageHistory = newHistory
+        }
+        return res
     } catch (error) {
         console.error(error);
     }
